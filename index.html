@@ -6,6 +6,7 @@
   <title>PlantOn – Vaš udaljeni vrt na dohvat ruke</title>
   <meta name="description" content="PlantOn je inovativni Food Tech startup koji vam omogućuje vlastiti udaljeni vrt s povrćem, bez napora i brige." />
   <link rel="stylesheet" href="styles.css" />
+  <!-- Cache busting comment -->
 </head>
 <body>
 <div class="page">
@@ -13,7 +14,7 @@
     <div class="shell">
       <nav class="nav">
         <div class="nav-left">
-          <div class="logo">P</div>
+          <a class="logo" href="index.html" aria-label="PlantOn početna">P</a>
           <div class="brand">
             <div class="brand-name">PlantOn</div>
             <div class="brand-tagline">Vaš udaljeni vrt</div>
@@ -28,13 +29,24 @@
         </div>
         <div class="nav-cta">
           <span>Želiš svoj vrt?</span>
-          <button class="btn btn-primary">Zakupi VRT</button>
+            <a class="btn btn-primary" href="#usluge">Zakupi VRT</a>
         </div>
       </nav>
     </div>
   </header>
 
   <main>
+    <!-- HERO: random blog articles -->
+    <section class="hero-blog" aria-label="Izvodi s bloga">
+      <div class="shell">
+        <div class="hero-blog__header">
+          <span class="hero-blog__kicker">Blog · Izvodi</span>
+          <h2 class="hero-blog__title">Pročitaj najnovije iz vrta</h2>
+        </div>
+        <div class="hero-blog__grid" id="heroBlogGrid"></div>
+      </div>
+    </section>
+
     <!-- HERO -->
     <section class="hero">
       <div class="shell hero-grid">
@@ -52,10 +64,7 @@
             Vi birate paket, mi se brinemo o svemu ostalom.
           </p>
           <div class="hero-actions">
-            <button class="btn btn-primary">
-              Zakupi VRT
-              <span>→</span>
-            </button>
+            <a class="btn btn-primary" href="PlantOn.html">Gledaj svoj VRT uživo<span>→</span></a>
             <button class="btn btn-ghost">
               Saznaj više o uslugama
             </button>
@@ -296,16 +305,6 @@
         </div>
       </div>
 
-      <!-- Blog modal (čitanje na istoj stranici) -->
-      <div class="blog-modal" id="blogModal" hidden>
-        <div class="blog-modal-backdrop" data-close></div>
-        <div class="blog-modal-panel" role="dialog" aria-modal="true" aria-labelledby="blogModalTitle">
-          <button class="blog-modal-close" type="button" data-close aria-label="Zatvori">×</button>
-          <div class="blog-modal-meta" id="blogModalMeta"></div>
-          <h3 class="blog-modal-title" id="blogModalTitle"></h3>
-          <div class="blog-modal-content" id="blogModalContent"></div>
-        </div>
-      </div>
     </section>
 
     <!-- FAQ -->
@@ -466,6 +465,7 @@
       <div class="footer-bottom">
         <span>© PlantOn – Sva prava pridržana.</span>
         <span>
+          <a href="investors.html">Investors</a> ·
           <a href="#">Uvjeti korištenja</a> ·
           <a href="#">GDPR</a> ·
           <a href="#">Pravila privatnosti</a>
@@ -500,6 +500,8 @@
         date: "2026-01-12",
         readTime: "4 min",
         tags: ["sezona", "planiranje", "rotacija"],
+        url: "article-1.html",
+        image: "assets/article1.jpg",
         accent: "linear-gradient(135deg, rgba(60,166,107,0.25), rgba(255,200,87,0.18))",
         content: [
           "Najviše uroda dolazi iz dobrog plana. Prvo gledamo tlo i mikroklimu, zatim dogovaramo preferencije korisnika (ako je paket prilagođen).",
@@ -516,6 +518,8 @@
         date: "2026-01-20",
         readTime: "5 min",
         tags: ["dostava", "recepti", "organizacija"],
+        url: "article-2.html",
+        image: "assets/article2.jpg",
         accent: "linear-gradient(135deg, rgba(255,200,87,0.22), rgba(60,166,107,0.16))",
         content: [
           "Kad je došla prva dostava, iznenadila me svježina – sve je bilo hrskavo i čisto složeno.",
@@ -532,6 +536,8 @@
         date: "2026-01-26",
         readTime: "3 min",
         tags: ["navodnjavanje", "vrućine", "praksa"],
+        url: "article-3.html",
+        image: "assets/article3.jpg",
         accent: "linear-gradient(135deg, rgba(19,32,24,0.22), rgba(60,166,107,0.18))",
         content: [
           "Kad temperatura poraste, cilj nam je zadržati stabilnu vlagu tla bez “šokova” za biljke.",
@@ -548,6 +554,8 @@
         date: "2026-01-29",
         readTime: "4 min",
         tags: ["navike", "planiranje", "zdravije"],
+        url: "article-4.html",
+        image: "assets/article4.jpg",
         accent: "linear-gradient(135deg, rgba(60,166,107,0.22), rgba(126,209,148,0.18))",
         content: [
           "Najveća promjena je što unaprijed planiram obroke oko povrća koje stiže, umjesto obrnuto.",
@@ -562,12 +570,33 @@
     const filters = Array.from(document.querySelectorAll(".blog-filter"));
     const search = document.getElementById("blogSearch");
 
-    const modal = document.getElementById("blogModal");
-    const modalTitle = document.getElementById("blogModalTitle");
-    const modalMeta = document.getElementById("blogModalMeta");
-    const modalContent = document.getElementById("blogModalContent");
+    // Hero: show 3 random blog articles
+    const heroBlogGrid = document.getElementById("heroBlogGrid");
+    if (heroBlogGrid && blogPosts.length) {
+      const shuffled = [...blogPosts].sort(() => Math.random() - 0.5);
+      const featured = shuffled.slice(0, 3);
+      heroBlogGrid.innerHTML = featured.map(function(post) {
+        const typeLabel = post.type === "planter" ? "Planter" : "Korisnik";
+        const chipClass = post.type === "planter" ? "blog-chip-planter" : "blog-chip-user";
+        return (
+          '<article class="hero-blog-card">' +
+            '<a href="' + post.url + '" class="hero-blog-card__link">' +
+              '<div class="hero-blog-card__media">' +
+                '<img src="' + post.image + '" alt="" class="hero-blog-card__img">' +
+                '<span class="hero-blog-card__chip ' + chipClass + '">' + typeLabel + '</span>' +
+              '</div>' +
+              '<div class="hero-blog-card__body">' +
+                '<h3 class="hero-blog-card__title">' + post.title + '</h3>' +
+                '<p class="hero-blog-card__excerpt">' + post.excerpt + '</p>' +
+                '<span class="hero-blog-card__meta">' + post.readTime + ' čitanja</span>' +
+              '</div>' +
+            '</a>' +
+          '</article>'
+        );
+      }).join("");
+    }
 
-    if (!grid || !empty || !filters.length || !search || !modal || !modalTitle || !modalMeta || !modalContent) return;
+    if (!grid || !empty || !filters.length || !search) return;
 
     const state = { filter: "all", query: "" };
 
@@ -614,8 +643,12 @@
         card.dataset.type = post.type;
 
         const media = document.createElement("div");
-        media.className = "blog-card-media";
-        media.style.backgroundImage = post.accent || "";
+        media.className = "blog-card-media-wrapper";
+        if (post.image) {
+          media.innerHTML = `<img src="${post.image}" alt="${post.title}" class="blog-card-media">`;
+        } else {
+          media.style.backgroundImage = post.accent || "";
+        }
 
         const badge = document.createElement("div");
         badge.className = "blog-card-badge " + (post.type === "planter" ? "is-planter" : "is-user");
@@ -650,10 +683,9 @@
         author.className = "blog-card-author";
         author.textContent = post.author;
 
-        const readMore = document.createElement("button");
+        const readMore = document.createElement("a");
         readMore.className = "blog-readmore";
-        readMore.type = "button";
-        readMore.dataset.postId = post.id;
+        readMore.href = post.url || "#";
         readMore.textContent = "Pročitaj →";
 
         footer.appendChild(author);
@@ -683,26 +715,6 @@
       render();
     }
 
-    function openModal(post) {
-      modalTitle.textContent = post.title;
-      modalMeta.textContent = `${typeLabel(post.type)} • ${post.author} • ${formatDate(post.date)} • ${post.readTime}`;
-      modalContent.innerHTML = (post.content || [])
-        .map(p => `<p>${p}</p>`)
-        .join("");
-
-      modal.hidden = false;
-      document.body.classList.add("modal-open");
-      requestAnimationFrame(() => modal.classList.add("is-open"));
-    }
-
-    function closeModal() {
-      modal.classList.remove("is-open");
-      document.body.classList.remove("modal-open");
-      window.setTimeout(() => {
-        modal.hidden = true;
-      }, 160);
-    }
-
     filters.forEach(btn => {
       btn.addEventListener("click", () => {
         setFilter(btn.dataset.filter || "all");
@@ -712,23 +724,6 @@
     search.addEventListener("input", () => {
       state.query = search.value || "";
       render();
-    });
-
-    grid.addEventListener("click", e => {
-      const btn = e.target.closest("[data-post-id]");
-      if (!btn) return;
-      const post = posts.find(p => p.id === btn.dataset.postId);
-      if (!post) return;
-      openModal(post);
-    });
-
-    modal.addEventListener("click", e => {
-      const closeTarget = e.target.closest("[data-close]");
-      if (closeTarget) closeModal();
-    });
-
-    document.addEventListener("keydown", e => {
-      if (!modal.hidden && e.key === "Escape") closeModal();
     });
 
     render();

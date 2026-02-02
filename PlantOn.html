@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlantOn - Vaš udaljeni vrt uživo</title>
+  <meta name="description" content="Gledajte uživo prijenos s vašeg udaljenog PlantOn vrta." />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Cache busting comment -->
+</head>
+<body class="live-app-page">
+<div class="page page--live-app">
+  <header class="app-bar">
+    <div class="app-bar__inner">
+      <a class="app-bar__back" href="index.html" aria-label="Natrag na početnu">←</a>
+      <h1 class="app-bar__title">Vrt Uživo</h1>
+      <a class="app-bar__logo" href="index.html" aria-label="PlantOn">P</a>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section class="app-container">
+      <div class="app-shell">
+
+        <div class="video-section">
+          <div class="video-container">
+            <img src="assets/live_camera.jpg" alt="Live stream vrta" class="live-stream-image">
+            <div class="garden-pointers" id="garden-pointers" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <div class="status-overview">
+          <div class="status-card summary">
+            <div class="status-icon">🌿</div>
+            <div class="status-text">
+              <div class="status-label">Status Vrta</div>
+              <div class="status-value" id="overall-status">U redu</div>
+            </div>
+          </div>
+          <div class="status-card watering">
+            <div class="status-icon">💧</div>
+            <div class="status-text">
+              <div class="status-label">Zadnje Zalijevanje</div>
+              <div class="status-value" id="last-watered">Prije 2 sata</div>
+            </div>
+          </div>
+          <div class="status-card temperature">
+            <div class="status-icon">☀️</div>
+            <div class="status-text">
+              <div class="status-label">Temperatura</div>
+              <div class="status-value" id="temperature">24°C</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="plant-details-grid" id="plant-details-grid">
+          <!-- Plant detail cards will be rendered here by JavaScript -->
+          <div class="plant-card">
+            <div class="card-icon">🌡️</div>
+            <div class="card-content">
+              <div class="card-label">Temperatura tla</div>
+              <div class="card-value" id="soil-temp">20°C</div>
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar" style="width: 70%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="plant-card">
+            <div class="card-icon">💧</div>
+            <div class="card-content">
+              <div class="card-label">Vlažnost tla</div>
+              <div class="card-value" id="soil-moisture">65%</div>
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar" style="width: 65%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="plant-card">
+            <div class="card-icon">☁️</div>
+            <div class="card-content">
+              <div class="card-label">Vlažnost zraka</div>
+              <div class="card-value" id="air-humidity">75%</div>
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar" style="width: 75%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="plant-card">
+            <div class="card-icon">⚡</div>
+            <div class="card-content">
+              <div class="card-label">pH Vrijednost</div>
+              <div class="card-value" id="ph-value">6.5</div>
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar" style="width: 50%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-actions">
+          <a class="btn btn-primary btn--full" href="index.html#usluge">Zakupi svoj vrt</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <a href="index.html">← Natrag na početnu</a>
+    <span>PlantOn</span>
+  </footer>
+</div>
+
+<div class="garden-ai-agent" id="garden-ai-agent" aria-label="Garden AI asistent">
+  <div class="garden-ai-agent__panel">
+    <div class="garden-ai-agent__panel-header">
+      <span class="garden-ai-agent__badge">AI</span>
+      <span class="garden-ai-agent__title">Garden AI</span>
+    </div>
+    <p class="garden-ai-agent__message">Pitajte me bilo što o vašem vrtu — zalijevanje, stanje biljaka ili savjeti.</p>
+    <button type="button" class="garden-ai-agent__cta" id="garden-ai-cta">Otvori chat</button>
+  </div>
+  <div class="garden-ai-agent__avatar" id="garden-ai-avatar" tabindex="0" aria-haspopup="true" aria-expanded="false">
+    <span class="garden-ai-agent__icon" aria-hidden="true">🌱</span>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Dynamic vegetable pointers on the live image (edit positions/names here)
+    const vegetablePointers = [
+      { name: 'Rajčice', x: 22, y: 35, status: 'ok' },
+      { name: 'Paprike', x: 48, y: 28, status: 'ok' },
+      { name: 'Salata', x: 72, y: 40, status: 'attention' },
+      { name: 'Mrkve', x: 35, y: 62, status: 'ok' },
+      { name: 'Luk', x: 65, y: 68, status: 'ok' },
+      { name: 'Tikvice', x: 55, y: 78, status: 'ok' },
+    ];
+
+    const pointersEl = document.getElementById('garden-pointers');
+    if (pointersEl) {
+      pointersEl.innerHTML = vegetablePointers.map((v) => {
+        const attention = v.status === 'attention';
+        const labelSide = v.x > 60 ? 'left' : 'right';
+        const sideClass = labelSide === 'left' ? ' garden-pointer--label-left' : '';
+        const attentionClass = attention ? ' garden-pointer--attention' : '';
+        return `<div class="garden-pointer${attentionClass}${sideClass}" style="left:${v.x}%;top:${v.y}%;">
+          <span class="garden-pointer__dot"></span>
+          <span class="garden-pointer__line"></span>
+          <span class="garden-pointer__label">${v.name}</span>
+        </div>`;
+      }).join('');
+    }
+
+    const overallStatusElement = document.getElementById('overall-status');
+    const lastWateredElement = document.getElementById('last-watered');
+    const temperatureElement = document.getElementById('temperature');
+    const soilTempElement = document.getElementById('soil-temp');
+    const soilMoistureElement = document.getElementById('soil-moisture');
+    const airHumidityElement = document.getElementById('air-humidity');
+    const phValueElement = document.getElementById('ph-value');
+
+    function updatePlantStatus() {
+      // Simulate data changes
+      const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const randomFloat = (min, max) => (Math.random() * (max - min) + min).toFixed(1);
+
+      const now = new Date();
+      const lastWateredTime = new Date(now.getTime() - random(1, 10) * 3600 * 1000); // 1-10 hours ago
+      const lastWateredString = `Prije ${Math.floor((now - lastWateredTime) / (3600 * 1000))} sati`;
+
+      const currentTemperature = random(20, 30);
+      const currentSoilTemp = random(18, 25);
+      const currentSoilMoisture = random(40, 80);
+      const currentAirHumidity = random(60, 90);
+      const currentPhValue = randomFloat(6.0, 7.5);
+
+      overallStatusElement.textContent = currentSoilMoisture < 50 ? 'Potrebno zalijevanje' : 'U redu';
+      lastWateredElement.textContent = lastWateredString;
+      temperatureElement.textContent = `${currentTemperature}°C`;
+      soilTempElement.textContent = `${currentSoilTemp}°C`;
+      soilMoistureElement.textContent = `${currentSoilMoisture}%`;
+      airHumidityElement.textContent = `${currentAirHumidity}%`;
+      phValueElement.textContent = currentPhValue;
+
+      // Update progress bars
+      document.querySelector('#soil-temp').nextElementSibling.querySelector('.progress-bar').style.width = `${(currentSoilTemp - 15) * 4}%`; // Scale 15-40 to 0-100
+      document.querySelector('#soil-moisture').nextElementSibling.querySelector('.progress-bar').style.width = `${currentSoilMoisture}%`;
+      document.querySelector('#air-humidity').nextElementSibling.querySelector('.progress-bar').style.width = `${currentAirHumidity}%`;
+      document.querySelector('#ph-value').nextElementSibling.querySelector('.progress-bar').style.width = `${(currentPhValue - 5.5) * 50}%`; // Scale 5.5-7.5 to 0-100
+    }
+
+    // Initial update and then every 5 seconds
+    updatePlantStatus();
+    setInterval(updatePlantStatus, 5000);
+
+    // Garden AI agent – toggle panel on click (for touch), keep hover on desktop
+    const gardenAI = document.getElementById('garden-ai-agent');
+    const gardenAIAvatar = document.getElementById('garden-ai-avatar');
+    const gardenAICta = document.getElementById('garden-ai-cta');
+    if (gardenAIAvatar && gardenAI) {
+      gardenAIAvatar.addEventListener('click', (e) => {
+        e.preventDefault();
+        gardenAI.classList.toggle('garden-ai-agent--open');
+        gardenAIAvatar.setAttribute('aria-expanded', gardenAI.classList.contains('garden-ai-agent--open'));
+      });
+    }
+    if (gardenAICta) {
+      gardenAICta.addEventListener('click', () => {
+        gardenAI.classList.remove('garden-ai-agent--open');
+        if (gardenAIAvatar) gardenAIAvatar.setAttribute('aria-expanded', 'false');
+        // Placeholder: open chat UI when implemented
+        console.log('Garden AI chat – coming soon');
+      });
+    }
+  });
+</script>
+</body>
+</html>
