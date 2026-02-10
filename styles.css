@@ -1737,21 +1737,51 @@ footer {
 
 @media (max-width: 640px) {
   .nav {
-    flex-wrap: wrap;
-    row-gap: 10px;
+    flex-direction: column;
+    align-items: stretch;
+    row-gap: 8px;
+  }
+
+  .nav-left {
+    justify-content: space-between;
   }
 
   .nav-links {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
+    order: 3;
+    display: flex;
+    gap: 14px;
     font-size: 13px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin: 0 -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    scrollbar-width: none;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-links a {
+    white-space: nowrap;
   }
 
   .nav-cta {
+    order: 2;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 0;
+    gap: 8px;
+  }
+
+  .nav-cta span {
+    display: none;
+  }
+
+  .nav-cta .btn-primary {
     width: 100%;
     justify-content: center;
-    margin-top: 4px;
   }
 
   .hero {
