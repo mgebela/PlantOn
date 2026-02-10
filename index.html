@@ -38,17 +38,6 @@
   </header>
 
   <main>
-    <!-- HERO: random blog articles -->
-    <section class="hero-blog" aria-label="Izvodi s bloga">
-      <div class="shell">
-        <div class="hero-blog__header">
-          <span class="hero-blog__kicker">Blog · Izvodi</span>
-          <h2 class="hero-blog__title">Pročitaj najnovije iz vrta</h2>
-        </div>
-        <div class="hero-blog__grid" id="heroBlogGrid"></div>
-      </div>
-    </section>
-
     <!-- HERO -->
     <section class="hero">
       <div class="shell hero-grid">
@@ -571,32 +560,6 @@
     const empty = document.getElementById("blogEmpty");
     const filters = Array.from(document.querySelectorAll(".blog-filter"));
     const search = document.getElementById("blogSearch");
-
-    // Hero: show 3 random blog articles
-    const heroBlogGrid = document.getElementById("heroBlogGrid");
-    if (heroBlogGrid && blogPosts.length) {
-      const shuffled = [...blogPosts].sort(() => Math.random() - 0.5);
-      const featured = shuffled.slice(0, 3);
-      heroBlogGrid.innerHTML = featured.map(function(post) {
-        const typeLabel = post.type === "planter" ? "Planter" : "Korisnik";
-        const chipClass = post.type === "planter" ? "blog-chip-planter" : "blog-chip-user";
-        return (
-          '<article class="hero-blog-card">' +
-            '<a href="' + post.url + '" class="hero-blog-card__link">' +
-              '<div class="hero-blog-card__media">' +
-                '<img src="' + post.image + '" alt="" class="hero-blog-card__img">' +
-                '<span class="hero-blog-card__chip ' + chipClass + '">' + typeLabel + '</span>' +
-              '</div>' +
-              '<div class="hero-blog-card__body">' +
-                '<h3 class="hero-blog-card__title">' + post.title + '</h3>' +
-                '<p class="hero-blog-card__excerpt">' + post.excerpt + '</p>' +
-                '<span class="hero-blog-card__meta">' + post.readTime + ' čitanja</span>' +
-              '</div>' +
-            '</a>' +
-          '</article>'
-        );
-      }).join("");
-    }
 
     if (!grid || !empty || !filters.length || !search) return;
 
