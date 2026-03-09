@@ -680,16 +680,18 @@ section {
 
 @media (max-width: 640px) {
   .rental-shell {
-    padding: 18px 16px 20px;
+    padding: 16px 14px 18px;
   }
 
   .rental-grid {
     grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+    gap: 10px;
   }
 
   .rental-card {
     padding: 14px 14px 12px;
+    border-radius: var(--radius-md);
+    border-width: 1px;
   }
 
   .rental-price {
