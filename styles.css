@@ -615,6 +615,7 @@ section {
 .rental-card-title {
   font-size: 14px;
   font-weight: 600;
+  margin-bottom: 2px;
 }
 
 .rental-price {
@@ -633,6 +634,7 @@ section {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  line-height: 1.4;
 }
 
 .rental-features li::before {
@@ -684,6 +686,19 @@ section {
   .rental-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
+  }
+
+  .rental-card {
+    padding: 14px 14px 12px;
+  }
+
+  .rental-price {
+    font-size: 16px;
+  }
+
+  .rental-cta {
+    width: 100%;
+    justify-content: center;
   }
 }
 
